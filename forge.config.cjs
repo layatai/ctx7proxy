@@ -5,6 +5,16 @@ const macIdentity = process.env.APPLE_SIGNING_IDENTITY || localMacIdentity;
 const notarizationConfigured = process.env.APPLE_ID
   && process.env.APPLE_PASSWORD
   && process.env.APPLE_TEAM_ID;
+const macNotarization = notarizationConfigured
+  ? {
+      tool: 'notarytool',
+      appleId: process.env.APPLE_ID,
+      appleIdPassword: process.env.APPLE_PASSWORD,
+      teamId: process.env.APPLE_TEAM_ID
+    }
+  : localMacIdentity
+    ? { keychainProfile: 'twinpane-notary' }
+    : undefined;
 
 module.exports = {
   packagerConfig: {
@@ -13,14 +23,7 @@ module.exports = {
     appBundleId: 'dev.ctx7proxy.desktop',
     appCategoryType: 'public.app-category.developer-tools',
     ...(macIdentity ? { osxSign: { identity: macIdentity } } : {}),
-    ...(notarizationConfigured ? {
-      osxNotarize: {
-        tool: 'notarytool',
-        appleId: process.env.APPLE_ID,
-        appleIdPassword: process.env.APPLE_PASSWORD,
-        teamId: process.env.APPLE_TEAM_ID
-      }
-    } : {})
+    ...(macNotarization ? { osxNotarize: macNotarization } : {})
   },
   makers: [
     {
