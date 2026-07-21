@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:">
+    <title>ctx7proxy</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main>
+      <header>
+        <div class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></div>
+        <div>
+          <p class="eyebrow">LOCAL DOCUMENTATION ROUTER</p>
+          <h1>ctx7proxy</h1>
+        </div>
+        <div id="status" class="status"><span></span><b>Loading</b></div>
+      </header>
+
+      <section class="endpoint-panel">
+        <div>
+          <p class="label">MCP ENDPOINT</p>
+          <code id="endpoint">Waiting for proxy…</code>
+        </div>
+        <button id="copy-endpoint" class="quiet">Copy</button>
+      </section>
+
+      <section>
+        <div class="section-title">
+          <div><p class="index">01</p><h2>Account pool</h2></div>
+          <button id="open-dashboard" class="link">Get a Context7 key ↗</button>
+        </div>
+        <div id="accounts" class="accounts"></div>
+        <form id="account-form" class="account-form">
+          <label><span>LABEL</span><input name="label" maxlength="80" placeholder="Work account" required></label>
+          <label class="key-field"><span>API KEY</span><input name="apiKey" type="password" placeholder="ctx7sk-…" required></label>
+          <button type="submit" class="primary">Add to pool</button>
+        </form>
+      </section>
+
+      <section>
+        <div class="section-title"><div><p class="index">02</p><h2>Local proxy</h2></div></div>
+        <form id="settings-form" class="settings-grid">
+          <label><span>PORT</span><input id="port" name="port" type="number" min="1" max="65535" required></label>
+          <label class="key-field"><span>CLIENT ACCESS TOKEN <em>OPTIONAL</em></span><input name="proxyApiKey" type="password" placeholder="Leave blank to keep current"></label>
+          <label class="toggle"><input id="launch-at-login" name="launchAtLogin" type="checkbox"><span></span>Launch when I sign in</label>
+          <button class="quiet" type="submit">Save settings</button>
+        </form>
+      </section>
+      <p id="message" role="status"></p>
+    </main>
+    <script src="app.js"></script>
+  </body>
+</html>

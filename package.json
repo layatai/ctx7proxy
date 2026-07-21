@@ -1,0 +1,61 @@
+{
+  "name": "ctx7proxy",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Cross-platform Context7 tray proxy with multi-account pooling",
+  "main": "src/desktop/main.js",
+  "bin": {
+    "ctx7proxy": "bin/ctx7proxy.cjs"
+  },
+  "files": [
+    "bin/",
+    "src/",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "dev": "electron-forge start",
+    "start": "electron-forge start",
+    "start:proxy": "node src/server.js",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "test": "node --test",
+    "lint": "node --check src/*.js src/desktop/*.js src/desktop/renderer/*.js bin/*.cjs test/*.js",
+    "prepublishOnly": "npm test && npm run lint"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "peerDependencies": {
+    "electron": "^43.1.1"
+  },
+  "keywords": [
+    "context7",
+    "mcp",
+    "proxy",
+    "tray",
+    "macos",
+    "windows"
+  ],
+  "author": "layatai",
+  "license": "MIT",
+  "homepage": "https://github.com/layatai/ctx7proxy#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/layatai/ctx7proxy.git"
+  },
+  "bugs": {
+    "url": "https://github.com/layatai/ctx7proxy/issues"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "devDependencies": {
+    "@electron-forge/cli": "^7.11.2",
+    "@electron-forge/maker-dmg": "^7.11.2",
+    "@electron-forge/maker-squirrel": "^7.11.2",
+    "@electron-forge/maker-zip": "^7.11.2",
+    "electron": "^43.1.1"
+  }
+}
