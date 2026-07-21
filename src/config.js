@@ -7,6 +7,8 @@ const parsePositiveInteger = (value, fallback, name) => {
   return parsed;
 };
 
+export const DEFAULT_PORT = 47_837;
+
 export const parseApiKeys = (value) => {
   if (!value?.trim()) throw new Error('CONTEXT7_API_KEYS is required');
 
@@ -33,7 +35,7 @@ export const parseApiKeys = (value) => {
 export const loadConfig = (env = process.env) => ({
   apiKeys: parseApiKeys(env.CONTEXT7_API_KEYS),
   host: env.HOST || '127.0.0.1',
-  port: parsePositiveInteger(env.PORT, 3000, 'PORT'),
+  port: parsePositiveInteger(env.PORT, DEFAULT_PORT, 'PORT'),
   proxyApiKey: env.PROXY_API_KEY?.trim() || null,
   cooldownMs: parsePositiveInteger(env.ACCOUNT_COOLDOWN_MS, 60_000, 'ACCOUNT_COOLDOWN_MS'),
   maxBodyBytes: parsePositiveInteger(env.MAX_BODY_BYTES, 1_048_576, 'MAX_BODY_BYTES')

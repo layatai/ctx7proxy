@@ -1,10 +1,11 @@
 import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
 import { dirname } from 'node:path';
+import { DEFAULT_PORT } from '../config.js';
 
 const defaults = {
   accounts: [],
   host: '127.0.0.1',
-  port: 3000,
+  port: DEFAULT_PORT,
   proxyApiKey: '',
   launchAtLogin: false
 };

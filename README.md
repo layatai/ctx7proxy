@@ -13,10 +13,10 @@ ctx7proxy
 
 Open the tray icon, add one or more `ctx7sk-…` account keys, and copy the MCP endpoint. Keys are encrypted with the operating system's secure storage and never exposed to the settings window after saving.
 
-Configure a Context7 MCP client to use `http://127.0.0.1:3000/mcp`. REST calls keep their original paths, for example:
+Configure a Context7 MCP client to use `http://127.0.0.1:47837/mcp`. REST calls keep their original paths, for example:
 
 ```bash
-curl 'http://127.0.0.1:3000/api/v2/libs/search?libraryName=react&query=state'
+curl 'http://127.0.0.1:47837/api/v2/libs/search?libraryName=react&query=state'
 ```
 
 If a client access token is configured in Settings, clients must send `Authorization: Bearer <proxy-key>`. The proxy replaces that credential with the selected Context7 account key. `/health` reports only account IDs and states; it never exposes keys.

@@ -4,6 +4,19 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import test from 'node:test';
 import { SettingsStore } from '../src/desktop/settings-store.js';
+import { DEFAULT_PORT } from '../src/config.js';
+
+test('uses the shared default port for new desktop settings', async (t) => {
+  const directory = await mkdtemp(join(tmpdir(), 'ctx7proxy-'));
+  t.after(() => rm(directory, { recursive: true, force: true }));
+  const store = new SettingsStore({
+    path: join(directory, 'settings.json'),
+    encrypt: String,
+    decrypt: String
+  });
+
+  assert.equal((await store.load()).port, DEFAULT_PORT);
+});
 
 test('encrypts API keys at rest and exposes only masked keys publicly', async (t) => {
   const directory = await mkdtemp(join(tmpdir(), 'ctx7proxy-'));
@@ -33,5 +46,5 @@ test('rejects invalid ports and keys without replacing settings', async (t) => {
   t.after(() => rm(directory, { recursive: true, force: true }));
   const store = new SettingsStore({ path: join(directory, 'settings.json'), encrypt: String, decrypt: String });
   await assert.rejects(store.save({ accounts: [], port: 0 }), /Port/);
-  await assert.rejects(store.save({ accounts: [{ apiKey: 'bad' }], port: 3000 }), /ctx7sk/);
+  await assert.rejects(store.save({ accounts: [{ apiKey: 'bad' }], port: DEFAULT_PORT }), /ctx7sk/);
 });

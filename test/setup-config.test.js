@@ -12,7 +12,7 @@ test('generates Codex and generic MCP configuration from the live endpoint', () 
 });
 
 test('adds a safe placeholder when client authentication is enabled', () => {
-  const guides = createSetupGuides({ endpoint: 'http://127.0.0.1:3000/mcp', hasProxyApiKey: true });
+  const guides = createSetupGuides({ endpoint: 'http://127.0.0.1:47837/mcp', hasProxyApiKey: true });
   assert.match(guides.codex, /Authorization = "Bearer YOUR_PROXY_ACCESS_TOKEN"/);
   assert.equal(JSON.parse(guides.generic).mcpServers.context7.headers.Authorization, 'Bearer YOUR_PROXY_ACCESS_TOKEN');
   assert.equal(guides.requiresAccessToken, true);

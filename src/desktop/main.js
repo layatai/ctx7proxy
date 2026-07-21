@@ -2,6 +2,7 @@ import { app, BrowserWindow, clipboard, ipcMain, Menu, nativeImage, safeStorage,
 import { join } from 'node:path';
 import { SettingsStore } from './settings-store.js';
 import { createSetupGuides } from './setup-config.js';
+import { createTrayIcon } from './tray-icon.js';
 import { startProxyServer } from '../proxy-server.js';
 
 let tray;
@@ -10,13 +11,6 @@ let proxyServer;
 let runtime = { state: 'stopped', message: 'Add an account to start the proxy' };
 let settings;
 let store;
-
-const trayIcon = () => {
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><rect x="3" y="3" width="26" height="26" rx="8" fill="#15181b"/><path d="M10 11h12M10 16h8M10 21h12" stroke="#b8f34b" stroke-width="3" stroke-linecap="round"/></svg>`;
-  const image = nativeImage.createFromDataURL(`data:image/svg+xml;base64,${Buffer.from(svg).toString('base64')}`);
-  image.setTemplateImage(process.platform === 'darwin');
-  return image;
-};
 
 const encryption = () => {
   if (!safeStorage.isEncryptionAvailable()) {
@@ -146,7 +140,7 @@ else {
     store = new SettingsStore({ path: join(app.getPath('userData'), 'settings.json'), ...encryption() });
     settings = await store.load();
     registerIpc();
-    tray = new Tray(trayIcon());
+    tray = new Tray(createTrayIcon(nativeImage));
     tray.on('click', showWindow);
     if (process.platform === 'darwin') app.dock.hide();
     await restartProxy();
