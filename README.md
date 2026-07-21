@@ -43,6 +43,13 @@ npm run make    # Build a distributable installer
 
 Build macOS installers on macOS and Windows installers on Windows. Forge produces a DMG/ZIP on macOS and a Squirrel `Setup.exe` on Windows under `out/make/`. Production releases should be code-signed for each platform.
 
+Local macOS builds reuse the Developer ID Application identity installed for Cairn. Release builds require these GitHub Actions secrets:
+
+- macOS: `APPLE_CERTIFICATE` (base64 PKCS#12), `APPLE_CERTIFICATE_PASSWORD`, `APPLE_SIGNING_IDENTITY`, `APPLE_ID`, `APPLE_PASSWORD`, and `APPLE_TEAM_ID`.
+- Windows: `WINDOWS_CERTIFICATE` (base64 PFX) and `WINDOWS_CERTIFICATE_PASSWORD`.
+
+The release workflow fails instead of distributing unsigned installers when signing certificates are missing.
+
 The headless environment-driven proxy remains available through `npm run start:proxy`; see `.env.example` for its configuration.
 
 ## Publish
