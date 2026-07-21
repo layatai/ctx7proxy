@@ -3,6 +3,7 @@ import { join } from 'node:path';
 import { SettingsStore } from './settings-store.js';
 import { createSetupGuides } from './setup-config.js';
 import { createTrayIcon } from './tray-icon.js';
+import { configureLoginItem } from './login-item.js';
 import { startProxyServer } from '../proxy-server.js';
 
 let tray;
@@ -11,6 +12,7 @@ let proxyServer;
 let runtime = { state: 'stopped', message: 'Add an account to start the proxy' };
 let settings;
 let store;
+const appDirectory = join(import.meta.dirname, '..', '..');
 
 const encryption = () => {
   if (!safeStorage.isEncryptionAvailable()) {
@@ -96,7 +98,7 @@ function refreshTrayMenu() {
 
 const saveAndRestart = async (nextSettings) => {
   settings = await store.save(nextSettings);
-  app.setLoginItemSettings({ openAtLogin: settings.launchAtLogin });
+  await configureLoginItem({ app, appDirectory, enabled: settings.launchAtLogin });
   await restartProxy();
   return SettingsStore.publicView(settings, runtime);
 };
@@ -135,16 +137,21 @@ const registerIpc = () => {
 
 if (!app.requestSingleInstanceLock()) app.quit();
 else {
-  app.on('second-instance', showWindow);
+  app.on('second-instance', (_event, argv) => {
+    if (!argv.includes('--hidden')) showWindow();
+  });
   app.whenReady().then(async () => {
     store = new SettingsStore({ path: join(app.getPath('userData'), 'settings.json'), ...encryption() });
     settings = await store.load();
+    if (!process.argv.includes('--hidden')) {
+      await configureLoginItem({ app, appDirectory, enabled: settings.launchAtLogin });
+    }
     registerIpc();
     tray = new Tray(createTrayIcon(nativeImage));
     tray.on('click', showWindow);
     if (process.platform === 'darwin') app.dock.hide();
     await restartProxy();
-    showWindow();
+    if (!process.argv.includes('--hidden')) showWindow();
   }).catch((error) => {
     console.error(error);
     app.quit();

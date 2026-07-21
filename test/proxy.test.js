@@ -40,6 +40,20 @@ test('fails over after a rate-limited account', async (t) => {
   assert.deepEqual(usedKeys, ['Bearer ctx7sk-a', 'Bearer ctx7sk-b']);
 });
 
+test('does not forward content encoding after fetch decompresses the upstream body', async (t) => {
+  const proxy = await startProxy(async () => new Response('{"ok":true}', {
+    headers: {
+      'content-type': 'application/json',
+      'content-encoding': 'gzip'
+    }
+  }));
+  t.after(proxy.close);
+
+  const response = await fetch(`${proxy.url}/api/v2/context`);
+  assert.equal(response.headers.has('content-encoding'), false);
+  assert.deepEqual(await response.json(), { ok: true });
+});
+
 test('uses the Context7 header for MCP requests', async (t) => {
   let key;
   const proxy = await startProxy(async (_url, init) => {

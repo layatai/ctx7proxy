@@ -4,6 +4,7 @@ const HOP_BY_HOP_HEADERS = new Set([
   'connection', 'keep-alive', 'proxy-authenticate', 'proxy-authorization',
   'te', 'trailer', 'transfer-encoding', 'upgrade', 'host', 'content-length'
 ]);
+const DECODED_RESPONSE_HEADERS = new Set([...HOP_BY_HOP_HEADERS, 'content-encoding']);
 
 const copyHeaders = (headers) => {
   const result = new Headers();
@@ -33,7 +34,7 @@ const readBody = async (request, limit) => {
 const writeResponse = (response, upstream) => {
   response.statusCode = upstream.status;
   upstream.headers.forEach((value, name) => {
-    if (!HOP_BY_HOP_HEADERS.has(name.toLowerCase())) response.setHeader(name, value);
+    if (!DECODED_RESPONSE_HEADERS.has(name.toLowerCase())) response.setHeader(name, value);
   });
   if (!upstream.body) return response.end();
   Readable.fromWeb(upstream.body).pipe(response);
