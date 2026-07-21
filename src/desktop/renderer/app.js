@@ -10,6 +10,8 @@ const elements = {
 };
 
 let state;
+let setupGuides;
+let activeGuide = 'codex';
 
 const notify = (message, isError = false) => {
   elements.message.textContent = message;
@@ -83,9 +85,45 @@ elements.settingsForm.addEventListener('submit', async (event) => {
 
 document.querySelector('#copy-endpoint').addEventListener('click', async () => {
   if (state.runtime.state !== 'running') return notify('Proxy is not running', true);
-  await navigator.clipboard.writeText(`${state.runtime.message}/mcp`);
+  await window.ctx7proxy.copyText(`${state.runtime.message}/mcp`);
   notify('MCP endpoint copied');
 });
 document.querySelector('#open-dashboard').addEventListener('click', () => window.ctx7proxy.openExternal('https://context7.com/dashboard'));
+
+const setupDialog = document.querySelector('#setup-dialog');
+const setupConfig = document.querySelector('#setup-config');
+const configLocation = document.querySelector('#config-location');
+const accessTokenNote = document.querySelector('#access-token-note');
+
+const renderGuide = (guide) => {
+  activeGuide = guide;
+  setupConfig.textContent = setupGuides[guide];
+  configLocation.textContent = guide === 'codex' ? '~/.codex/config.toml' : 'MCP client configuration';
+  accessTokenNote.hidden = !setupGuides.requiresAccessToken;
+  document.querySelectorAll('.setup-tab').forEach((tab) => {
+    const selected = tab.dataset.guide === guide;
+    tab.classList.toggle('active', selected);
+    tab.setAttribute('aria-selected', String(selected));
+  });
+};
+
+document.querySelector('#open-setup').addEventListener('click', async () => {
+  try {
+    setupGuides = await window.ctx7proxy.getSetupGuides();
+    renderGuide('codex');
+    setupDialog.showModal();
+  } catch (error) { notify(error.message, true); }
+});
+document.querySelector('#close-setup').addEventListener('click', () => setupDialog.close());
+setupDialog.addEventListener('click', (event) => {
+  if (event.target === setupDialog) setupDialog.close();
+});
+document.querySelectorAll('.setup-tab').forEach((tab) => {
+  tab.addEventListener('click', () => renderGuide(tab.dataset.guide));
+});
+document.querySelector('#copy-config').addEventListener('click', async () => {
+  await window.ctx7proxy.copyText(setupGuides[activeGuide]);
+  notify(`${activeGuide === 'codex' ? 'Codex' : 'MCP'} configuration copied`);
+});
 
 window.ctx7proxy.getState().then(render).catch((error) => notify(error.message, true));

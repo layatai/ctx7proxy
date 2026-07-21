@@ -20,10 +20,13 @@
 
       <section class="endpoint-panel">
         <div>
-          <p class="label">MCP ENDPOINT</p>
+          <p class="label">YOUR LOCAL MCP ENDPOINT</p>
           <code id="endpoint">Waiting for proxy…</code>
         </div>
-        <button id="copy-endpoint" class="quiet">Copy</button>
+        <div class="endpoint-actions">
+          <button id="copy-endpoint" class="quiet">Copy URL</button>
+          <button id="open-setup" class="setup-trigger">Set up a client →</button>
+        </div>
       </section>
 
       <section>
@@ -40,16 +43,51 @@
       </section>
 
       <section>
-        <div class="section-title"><div><p class="index">02</p><h2>Local proxy</h2></div></div>
+        <div class="section-title">
+          <div><p class="index">02</p><h2>Local proxy</h2></div>
+          <p class="section-hint">Changes restart the proxy</p>
+        </div>
         <form id="settings-form" class="settings-grid">
-          <label><span>PORT</span><input id="port" name="port" type="number" min="1" max="65535" required></label>
-          <label class="key-field"><span>CLIENT ACCESS TOKEN <em>OPTIONAL</em></span><input name="proxyApiKey" type="password" placeholder="Leave blank to keep current"></label>
-          <label class="toggle"><input id="launch-at-login" name="launchAtLogin" type="checkbox"><span></span>Launch when I sign in</label>
-          <button class="quiet" type="submit">Save settings</button>
+          <div class="settings-fields">
+            <label><span>PORT</span><input id="port" name="port" type="number" min="1" max="65535" required></label>
+            <label class="key-field"><span>CLIENT ACCESS TOKEN <em>OPTIONAL</em></span><input name="proxyApiKey" type="password" placeholder="Leave blank to keep current"></label>
+          </div>
+          <div class="settings-actions">
+            <label class="toggle" for="launch-at-login">
+              <input id="launch-at-login" name="launchAtLogin" type="checkbox" role="switch">
+              <span class="switch-track" aria-hidden="true"></span>
+              <span class="toggle-copy"><b>Launch at login</b><small>Keep the proxy ready after sign-in</small></span>
+            </label>
+            <button class="quiet save-button" type="submit">Save settings</button>
+          </div>
         </form>
       </section>
       <p id="message" role="status"></p>
     </main>
+
+    <dialog id="setup-dialog" aria-labelledby="setup-title">
+      <div class="dialog-head">
+        <div>
+          <p class="eyebrow">CONNECTION ASSISTANT</p>
+          <h2 id="setup-title">Point your tools here.</h2>
+        </div>
+        <button id="close-setup" class="close-button" aria-label="Close setup assistant">×</button>
+      </div>
+      <p class="dialog-intro">Choose your client, copy the generated block, then restart the client. The URL always follows the port configured in this app.</p>
+      <div class="setup-tabs" role="tablist">
+        <button class="setup-tab active" data-guide="codex" role="tab" aria-selected="true">Codex</button>
+        <button class="setup-tab" data-guide="generic" role="tab" aria-selected="false">Generic MCP</button>
+      </div>
+      <div class="config-card">
+        <div class="config-meta">
+          <span id="config-location">~/.codex/config.toml</span>
+          <button id="copy-config" class="link">Copy configuration</button>
+        </div>
+        <pre><code id="setup-config"></code></pre>
+      </div>
+      <p id="access-token-note" class="setup-note" hidden>Replace <code>YOUR_PROXY_ACCESS_TOKEN</code> with the client access token configured in Local proxy.</p>
+      <p class="setup-warning"><b>CLI note</b> The <code>ctx7 library</code> and <code>ctx7 docs</code> commands use Context7’s hardcoded upstream. This URL is for MCP clients.</p>
+    </dialog>
     <script src="app.js"></script>
   </body>
 </html>

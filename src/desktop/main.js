@@ -1,6 +1,7 @@
 import { app, BrowserWindow, clipboard, ipcMain, Menu, nativeImage, safeStorage, shell, Tray } from 'electron';
 import { join } from 'node:path';
 import { SettingsStore } from './settings-store.js';
+import { createSetupGuides } from './setup-config.js';
 import { startProxyServer } from '../proxy-server.js';
 
 let tray;
@@ -108,6 +109,16 @@ const saveAndRestart = async (nextSettings) => {
 
 const registerIpc = () => {
   ipcMain.handle('settings:get', () => SettingsStore.publicView(settings, runtime));
+  ipcMain.handle('setup:get', () => createSetupGuides({
+    endpoint: runtime.state === 'running' ? `${runtime.message}/mcp` : null,
+    hasProxyApiKey: Boolean(settings.proxyApiKey)
+  }));
+  ipcMain.handle('clipboard:write', (_event, value) => {
+    if (typeof value !== 'string' || value.length === 0 || value.length > 10_000) {
+      throw new Error('Clipboard content is invalid');
+    }
+    clipboard.writeText(value);
+  });
   ipcMain.handle('accounts:add', async (_event, account) => saveAndRestart({
     ...settings,
     accounts: [...settings.accounts, { label: account.label, apiKey: account.apiKey }]
