@@ -78,6 +78,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.artifact }}
+          retention-days: 1
           path: out/make/**/*
           if-no-files-found: error
 
@@ -93,6 +94,7 @@ jobs:
       - name: Attach installers to release
         env:
           GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
           RELEASE_TAG: ${{ github.event.release.tag_name }}
         run: find release-assets -type f -print0 | xargs -0 gh release upload "$RELEASE_TAG" --clobber
 
